@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkOrder xmlns="http://Icod.Wod" xsi:schemaLocation="http://Icod.Wod \\Jcb-App\Icod.Wod\schema0.xsd"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	jobName="PS Applicant file upload (Jgsm -> Production Control)"
+	emailTo="GM-~WebServices@cornell.edu"
+>
+	<!--
+	emailTo="tjb284@cornell.edu"
+	emailTo="tjb284@cornell.edu, tjr32@cornell.edu"
+	emailTo="tjb284@cornell.edu, tjr32@cornell.edu, dwf49@cornell.edu"
+	-->
+
+	<variables>
+		<variable name="host" value="jcb-app"/>
+		<!-- env can be test or prod -->
+		<variable name="env" value="prod" />
+	</variables>
+
+	<steps>
+		<fileOperation xsi:type="deleteFile" path="\\%var:host%\PSUpload\Upload" name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt" />
+		<fileOperation xsi:type="touchFile" path="\\%var:host%\PSUpload\Upload" name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt" />
+
+		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure"
+			commandType="Text" commandText="select [PSU_01_EXTNUM], [PSU_02_LNAME], [PSU_03_FNAME], [PSU_04_MNAME], [PSU_05_SUFFIX], [PSU_06_BDAY], [PSU_07_SEX], [PSU_08_MSTAT], [PSU_09_NID], [PSU_10_CNTRYH], [PSU_11_ADDR1H], [PSU_12_ADDR2H], [PSU_13_ADDR3H], [PSU_14_CITYH], [PSU_15_ZIPH], [PSU_16_STATEH], [PSU_17_PHONEH], [PSU_18_EMAIL], [PSU_19_ETHNIC], [PSU_20_ETHN2], [PSU_21_ETHN3], [PSU_22_ETHN4], [PSU_23_ETHN5], [PSU_24_ETHN6], [PSU_25_CTZENP], [PSU_26_CTZEN], [PSU_27_CTZENS], [PSU_28_AD_TYP], [PSU_29_CAREER], [PSU_30_PROG], [PSU_31_AD_TRM], [PSU_32_PLAN], [PSU_33_GRDTRM], [PSU_34_VISATY], [PSU_35_CELL], [PSU_36_ECNAME], [PSU_37_ECPRIM], [PSU_38_ECREL], [PSU_39_ECADR1], [PSU_40_ECADR2], [PSU_41_ECADR3], [PSU_42_ECCITY], [PSU_43_ECSTAT], [PSU_44_ECZIP], [PSU_45_ECCNTY], [PSU_46_ECPHON], [PSU_47_ECPHNC], [PSU_48_ECPHNW], [PSU_49_TCTRY], [PSU_50_ADTXT], [PSU_51_PLAN2], [PSU_52_BCNTRY] from dbo.Adm_PSUpload_1_APPL_vw"
+		>
+			<destination xsi:type="delimitedFile" hasHeader="false" writeIfEmpty="false" fieldSeperator="9" forceQuote="false"
+				path="\\%var:host%\PSUpload\Upload" name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
+			/>
+		</dbOperation>
+
+		<dbOperation xsi:type="command" connectionStringName="JgsmDataSecure"
+			commandType="StoredProcedure" commandText="dbo.JS_Post_APPL_Create_Updates"
+		/>
+
+		<fileOperation xsi:type="mkDir" path="\\%var:host%\PSUpload\Archive" />
+		<fileOperation xsi:type="mkZip" move="false" truncateEntryName="true" writeIfEmpty="false" searchOption="TopDirectoryOnly"
+			path="\\%var:host%\PSUpload\Archive" name="Applicant.%wod:DateTime{yyyyMMdd}%.zip"
+		>
+			<sources>
+				<source searchOption="TopDirectoryOnly"
+					path="\\%var:host%\PSUpload\upload" name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
+				/>
+			</sources>
+		</fileOperation>
+
+		<fileOperation xsi:type="copyFile" move="false" searchOption="TopDirectoryOnly"
+			path="\\%var:host%\PSUpload\upload" name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
+		>
+			<!-- username is encoded with environment variable, env -->
+			<destination password="dq|S=B9yP"
+				path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
+			>
+				<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
+			</destination>
+		</fileOperation>
+
+		<!--<fileOperation xsi:type="executeFile"
+			path="\\%var:host%\Icod.Wod" name="FilePrune.exe"
+			args="\\%var:host%\PSUpload\Archive Applicant.*.zip TopDirectoryOnly 15:0:0:0"
+		/>-->
+
+		<fileOperation xsi:type="deleteFile" searchOption="TopDirectoryOnly"
+			path="\\%var:host%\PSUpload\upload" name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
+		/>
+
+	</steps>
+</WorkOrder>
