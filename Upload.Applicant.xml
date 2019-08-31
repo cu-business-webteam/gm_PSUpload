@@ -18,6 +18,7 @@
 
 	<steps>
 		<fileOperation xsi:type="touchFile"
+			password="dq|S=B9yP"
 			path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
 			name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
 		>
@@ -28,6 +29,7 @@
 			commandType="StoredProcedure" commandText="dbo.JS_To_PS_ApplicantFileUpload"
 		>
 			<destination xsi:type="delimitedFile" hasHeader="false" writeIfEmpty="false" fieldSeperator="9" forceQuote="false"
+				password="dq|S=B9yP"
 				path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
 				name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
 			>
