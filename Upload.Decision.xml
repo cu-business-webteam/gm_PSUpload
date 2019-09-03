@@ -20,8 +20,9 @@
 		<fileOperation xsi:type="deleteFile" path="\\%var:host%\PSUpload\Upload" name="gm_edl.dat" />
 		<fileOperation xsi:type="touchFile" path="\\%var:host%\PSUpload\Upload" name="gm_edl.dat" />
 
-		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure"
-			commandType="Text" commandText="select [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR], [PSU_13_RECRUITING_CAT] from dbo.Adm_PSUpload_2_Decisions_vw"
+		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure" commandType="Text" 
+			commandText="select [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR], [PSU_13_RECRUITING_CAT] from dbo.Adm_PSUpload_2_Decisions_vw"
+			missingMappingAction="Passthrough" missingSchemaAction="Add"
 		>
 			<destination xsi:type="delimitedFile" hasHeader="false" writeIfEmpty="false" fieldSeperator="44" forceQuote="false"
 				path="\\%var:host%\PSUpload\Upload" name="gm_edl.dat"
@@ -54,14 +55,9 @@
 			commandType="Text" commandText="INSERT INTO [dbo].[PSUpload_Decisions_Upload_History] ([Filename], [UploadDatetime], [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR], [PSU_13_RECRUITING_CAT] ) ( SELECT 'gm_edl.dat' as [Filename], GetDate() as [UploadDatetime], [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR],[PSU_13_RECRUITING_CAT] FROM [dbo].[Adm_PSUpload_2_Decisions_vw] )"
 		/>
 
-		<!--<fileOperation xsi:type="executeFile"
-			path="\\%var:host%\Icod.Wod" name="FilePrune.exe"
-			args="\\%var:host%\PSUpload\Archive Decision.*.zip TopDirectoryOnly 15:0:0:0"
-		/>-->
-
 		<fileOperation xsi:type="deleteFile" searchOption="TopDirectoryOnly"
 			path="\\%var:host%\PSUpload\upload" name="gm_edl.dat"
 		/>
 
-		</steps>
+	</steps>
 </WorkOrder>

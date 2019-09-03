@@ -25,8 +25,9 @@
 			<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
 		</fileOperation>
 
-		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure"
-			commandType="StoredProcedure" commandText="dbo.JS_To_PS_ApplicantFileUpload"
+		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure" commandType="StoredProcedure" 
+			commandText="dbo.JS_To_PS_ApplicantFileUpload"
+			missingMappingAction="Passthrough" missingSchemaAction="Add"
 		>
 			<destination xsi:type="delimitedFile" hasHeader="false" writeIfEmpty="false" fieldSeperator="9" forceQuote="false"
 				password="dq|S=B9yP"
