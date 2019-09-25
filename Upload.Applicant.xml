@@ -2,7 +2,7 @@
 <WorkOrder xmlns="http://Icod.Wod" xsi:schemaLocation="http://Icod.Wod \\Jcb-App\Icod.Wod\schema0.xsd"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	jobName="PS Applicant file upload (Jgsm -> Production Control)"
-	emailTo="GM-~WebServices@cornell.edu"
+	emailTo="tjb284@cornell.edu"
 >
 	<!--
 	emailTo="tjb284@cornell.edu"
@@ -37,10 +37,6 @@
 				<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
 			</destination>
 		</dbOperation>
-
-		<dbOperation xsi:type="command" connectionStringName="JgsmDataSecure"
-			commandType="StoredProcedure" commandText="dbo.JS_Post_APPL_Create_Updates"
-		/>
 
 	</steps>
 </WorkOrder>
