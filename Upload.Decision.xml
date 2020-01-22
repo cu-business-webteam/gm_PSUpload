@@ -8,6 +8,7 @@
 	emailTo="tjb284@cornell.edu"
 	emailTo="tjb284@cornell.edu, tjr32@cornell.edu"
 	emailTo="tjb284@cornell.edu, tjr32@cornell.edu, dwf49@cornell.edu"
+	emailTo="GM-~WebServices@cornell.edu"
 	-->
 
 	<variables>
@@ -17,47 +18,25 @@
 	</variables>
 
 	<steps>
-		<fileOperation xsi:type="deleteFile" path="\\%var:host%\PSUpload\Upload" name="gm_edl.dat" />
-		<fileOperation xsi:type="touchFile" path="\\%var:host%\PSUpload\Upload" name="gm_edl.dat" />
+		<fileOperation xsi:type="touchFile" password="dq|S=B9yP"
+			path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
+			name="gm_edl.dat"
+		>
+			<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
+		</fileOperation>
 
-		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure" commandType="Text" 
-			commandText="select [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR], [PSU_13_RECRUITING_CAT] from dbo.Adm_PSUpload_2_Decisions_vw"
+		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure" commandType="StoredProcedure"
+			commandText="dbo.Get_PS_Decision_Upload"
 			missingMappingAction="Passthrough" missingSchemaAction="Add"
 		>
 			<destination xsi:type="delimitedFile" hasHeader="false" writeIfEmpty="false" fieldSeperator="44" forceQuote="false"
-				path="\\%var:host%\PSUpload\Upload" name="gm_edl.dat"
-			/>
-		</dbOperation>
-
-		<fileOperation xsi:type="mkDir" path="\\%var:host%\PSUpload\Archive" />
-		<fileOperation xsi:type="mkZip" move="false" truncateEntryName="true" writeIfEmpty="false" searchOption="TopDirectoryOnly"
-			path="\\%var:host%\PSUpload\Archive" name="Decision.%wod:DateTime{yyyyMMdd}%.zip"
-		>
-			<sources>
-				<source searchOption="TopDirectoryOnly"
-					path="\\%var:host%\PSUpload\upload" name="gm_edl.dat"
-				/>
-			</sources>
-		</fileOperation>
-
-		<fileOperation xsi:type="copyFile" move="true" searchOption="TopDirectoryOnly"
-			path="\\%var:host%\PSUpload\upload" name="gm_edl.dat"
-		>
-			<!-- username is encoded with environment variable, env -->
-			<destination password="dq|S=B9yP"
+				password="dq|S=B9yP"
 				path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
+				name="gm_edl.dat"
 			>
 				<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
 			</destination>
-		</fileOperation>
-
-		<dbOperation xsi:type="command" connectionStringName="JgsmDataSecure"
-			commandType="Text" commandText="INSERT INTO [dbo].[PSUpload_Decisions_Upload_History] ([Filename], [UploadDatetime], [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR], [PSU_13_RECRUITING_CAT] ) ( SELECT 'gm_edl.dat' as [Filename], GetDate() as [UploadDatetime], [PSU_01_CAREER], [PSU_02_UG_APP_ID], [PSU_03_GR_APP_ID], [PSU_04_DECISION_DT], [PSU_05_ACTION], [PSU_06_ACTION_REASON], [PSU_07_PROG], [PSU_08_PLAN], [PSU_09_AD_TRM], [PSU_10_DECLINE_REASON], [PSU_11_OTH_ORG_ID], [PSU_12_OTH_ORG_DESCR],[PSU_13_RECRUITING_CAT] FROM [dbo].[Adm_PSUpload_2_Decisions_vw] )"
-		/>
-
-		<fileOperation xsi:type="deleteFile" searchOption="TopDirectoryOnly"
-			path="\\%var:host%\PSUpload\upload" name="gm_edl.dat"
-		/>
-
+		</dbOperation>
 	</steps>
+
 </WorkOrder>
