@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkOrder xmlns="http://Icod.Wod" xsi:schemaLocation="http://Icod.Wod \\Jcb-App\Icod.Wod\schema0.xsd"
+<WorkOrder xmlns="http://Icod.Wod" xsi:schemaLocation="http://Icod.Wod \\jcb-app\Icod.Wod\schema0.xsd"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	jobName="PS Applicant file upload (Jgsm -> Production Control)"
 	emailTo="GM-~WebServices@cornell.edu"
@@ -12,7 +12,7 @@
 	-->
 
 	<variables>
-		<variable name="host" value="jcb-app"/>
+		<variable name="host" value="\\jcb-app"/>
 		<!-- env can be test or prod -->
 		<variable name="env" value="prod" />
 	</variables>
@@ -23,10 +23,10 @@
 			path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
 			name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
 		>
-			<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
+			<sshKeyFile path="%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
 		</fileOperation>
 
-		<dbOperation xsi:type="fileExport" connectionStringName="JgsmDataSecure" commandType="StoredProcedure" 
+		<dbFileExport connectionStringName="JgsmDataSecure" commandType="StoredProcedure" 
 			commandText="dbo.JS_To_PS_ApplicantFileUpload"
 			missingMappingAction="Passthrough" missingSchemaAction="Add"
 		>
@@ -35,9 +35,9 @@
 				path="sftp://jgsm-prodcrtl-%var:env%@box12transfer.cit.cornell.edu/users/%var:env%/jgsm-prodcrtl/upload"
 				name="GM_APPL_%wod:DateTime{yyyyMMdd}%.txt"
 			>
-				<sshKeyFile path="\\%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
+				<sshKeyFile path="%var:host%\PSUpload" name="jgsm-prodcrtl.openssh.key" keyFilePassword="dq|S=B9yP" />
 			</destination>
-		</dbOperation>
+		</dbFileExport>
 
 	</steps>
 </WorkOrder>
